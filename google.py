@@ -1,5 +1,4 @@
 #!/usr/bin/env python2.7
-#!coding:utf-8
 
 try:
     import gevent
@@ -16,8 +15,6 @@ import time
 import re
 
 socket.setdefaulttimeout(3)
-
-Counter = {}
 
 def get_connect_time(ip, port):
     conn = httplib.HTTPConnection(ip, port)
@@ -46,19 +43,20 @@ def bi_value(x):
     else: y = 0
     return y
 
-def get_available_google_ips(seeds, threads=None):
+def get_available_google_ips(seeds, threads=None, max=None):
     threads = threads if threads else (500 if monkey else 10)
+    max = max if max else 50
     gen = random_ip_generator(seeds)
     pool = ThreadPool(processes=threads)
     available_ips = []
-    while len(available_ips) < 50:
+    while len(available_ips) <= max:
         latent_ips = [gen.next() for _ in range(threads)]
         results = pool.map(ping, latent_ips)
         for ip, dt in results:
             if dt > 0:
                 available_ips.append((ip, dt))
     sorted_ips = map(lambda x: x[0], sorted(results, lambda (_, a), (__, b): bi_value(a-b)))
-    return sorted_ips
+    return sorted_ips[:max]
 
 
 def random_ip_generator(seeds):
@@ -83,6 +81,7 @@ def _main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', '--threads', default=500, type=int)
     parser.add_argument('-o', '--output', default='output.txt')
+    parser.add_argument('-m', '--max', default=50, type=int)
     parser.add_argument('seed_file', default='input.txt')
 
     args = parser.parse_args()
