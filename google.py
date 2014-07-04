@@ -55,7 +55,7 @@ def get_available_google_ips(seeds, threads=None, max=None):
         for ip, dt in results:
             if dt > 0:
                 available_ips.append((ip, dt))
-    sorted_ips = map(lambda x: x[0], sorted(results, lambda (_, a), (__, b): bi_value(a-b)))
+    sorted_ips = map(lambda x: x[0], sorted(available_ips, lambda (_, a), (__, b): bi_value(a-b)))
     return sorted_ips[:max]
 
 
