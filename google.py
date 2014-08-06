@@ -8,26 +8,35 @@ except:
     monkey = None
 
 from multiprocessing.pool import ThreadPool
+from threading import Lock
 import argparse
 import httplib
 import socket
 import time
+import sys
 import re
 
 socket.setdefaulttimeout(3)
 
+_COUNT = 0
+_DEFAULT_THREADS = 500 if monkey else 10
+
 def get_connect_time(ip, port):
+    global _COUNT
     conn = httplib.HTTPConnection(ip, port)
     try:
         conn.request('HEAD', '/')
         resp = conn.getresponse()
         if resp.status == 200 and resp.getheader('server') == 'gws':
+            time.sleep(2)
             conn = httplib.HTTPConnection(ip, port)
             conn.request('HEAD', '/')
             s = time.time()
             resp = conn.getresponse()
             dt = time.time() - s
             if resp.status == 200:
+                _COUNT += 1
+                print_progress(_COUNT)
                 return dt
     except:
         pass
@@ -43,9 +52,24 @@ def bi_value(x):
     else: y = 0
     return y
 
+def print_progress_builder(max):
+    _lck = Lock()
+    def print_progress(current):
+        with _lck:
+            pect = current * 100.0 / max;
+            sys.stdout.write('\r')
+            sys.stdout.flush()
+            sys.stdout.write('finish: %s%%' % pect)
+            sys.stdout.flush()
+    return print_progress
+
+print_progress = None
+
 def get_available_google_ips(seeds, threads=None, max=None):
+    global print_progress
     threads = threads if threads else (500 if monkey else 10)
     max = max if max else 50
+    print_progress = print_progress_builder(max)
     gen = random_ip_generator(seeds)
     pool = ThreadPool(processes=threads)
     available_ips = []
@@ -55,9 +79,10 @@ def get_available_google_ips(seeds, threads=None, max=None):
         for ip, dt in results:
             if dt > 0:
                 available_ips.append((ip, dt))
-    sorted_ips = map(lambda x: x[0], sorted(available_ips, lambda (_, a), (__, b): bi_value(a-b)))
+    sorted_ips = map(lambda x: x[0], 
+                     sorted(available_ips, 
+                            lambda (_, a), (__, b): bi_value(a-b)))
     return sorted_ips[:max]
-
 
 def random_ip_generator(seeds):
     from random import randint
@@ -79,7 +104,7 @@ def random_ip_generator(seeds):
 
 def _main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-n', '--threads', default=500, type=int)
+    parser.add_argument('-n', '--threads', default=_DEFAULT_THREADS, type=int)
     parser.add_argument('-o', '--output', default='output.txt')
     parser.add_argument('-m', '--max', default=50, type=int)
     parser.add_argument('seed_file', default='input.txt')
@@ -91,7 +116,7 @@ def _main():
 
     with open(seed_file) as fr:
         seeds = fr.readlines()
-    google_ips = get_available_google_ips(seeds, threads)
+    google_ips = get_available_google_ips(seeds, threads, args.max)
     with open(output, 'w') as fw:
         fw.write('|'.join(google_ips))
 
