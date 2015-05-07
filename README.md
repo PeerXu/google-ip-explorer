@@ -28,4 +28,6 @@ Google IP列表就在output.txt文件中.
 ###或者跳过1-2步，直接点击以下链接:
 [click here](http://www.zoomeye.org/search?q=gws)
 
-然后执行3-4步
+然后再执行3-4步。
+
+**ref** [what is ZoomEye?](http://www.zoomeye.org/about)
