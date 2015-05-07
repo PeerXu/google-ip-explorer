@@ -25,6 +25,7 @@ Google IP列表就在output.txt文件中.
 3. 在返回的结果中选择一个ip，复制到浏览器的地址栏
 4. enter，just enjoy it.
 
-###或者跳过1-2步，直接点击以下链接
+###或者跳过1-2步，直接点击以下链接:
 [click here](http://www.zoomeye.org/search?q=gws)
+
 然后执行3-4步
