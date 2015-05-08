@@ -32,3 +32,11 @@ Google IP列表就在output.txt文件中.
 
 ####ref： 
 [what is ZoomEye?](http://www.zoomeye.org/about)
+
+
+##编译成可以单独运行的.exe文件
+
+使用PyInstaller将`google.py`打包成**win7 x86**环境下可以独立运行的exe文件。
+只需直接下载`google`文件夹，然后在`google/dist/`路径下找到`google.exe`，双击运行。
+运行结束后，`output.txt`中保存结果。
+
