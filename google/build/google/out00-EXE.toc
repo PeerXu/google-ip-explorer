@@ -1,0 +1,9 @@
+('D:\\mycode\\Github\\google-ip-explorer\\pyinstaller-develop\\pyinstaller-develop\\google\\dist\\google.exe',
+ True,
+ False,
+ None,
+ None,
+ [],
+ None,
+ False,
+ 1431061071L)
