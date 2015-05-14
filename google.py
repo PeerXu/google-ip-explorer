@@ -101,19 +101,43 @@ def random_ip_generator(seeds):
             return ip
     while True:
         yield gen()
+#-----------test-----------
+'''
+def _main(arg_threads, arg_output, arg_seed, arg_max):
+
+    threads = arg_threads
+    output = arg_output
+    seed_file = arg_seed
+    with open(seed_file) as fr:
+        seeds = fr.readlines()
+    google_ips = get_available_google_ips(seeds, threads, arg_max)
+    with open(output, 'w') as fw:
+        fw.write('|'.join(google_ips))
+
+if __name__ == '__main__':
+    _main(_DEFAULT_THREADS, 'output.txt', 'input.txt', 20)
+'''
+def memu():
+    print '-'*32, 'Usage', '-'*32
+    print 'google.exe [-h] [-i] [filename1] [-o] [filename2] [-n] [num1] [-m] [num2]'
+    print '\'google.exe -h\' to get more help'
+    print '1.filename1 is input file,default filename is input.txt'
+    print '2.filename2 is output file,default filename is output.txt'
+    print '3.num1 is threads num,default num is 500'
+    print '4.num2 is max time out,default num is 20'
+    print '-'*70
+
 
 def _main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-n', '--threads', default=_DEFAULT_THREADS, type=int)
-    parser.add_argument('-o', '--output', default='output.txt')
-    parser.add_argument('-m', '--max', default=50, type=int)
-    parser.add_argument('seed_file', default='input.txt')
-
+    parser.add_argument('-i', '--seed_file', default='input.txt', help='input filename,default filename is input.txt')
+    parser.add_argument('-o', '--output', default='output.txt', help='output filename,default filename is output.txt')
+    parser.add_argument('-n', '--threads', default=_DEFAULT_THREADS, type=int, help='threads num,default num is 500')
+    parser.add_argument('-m', '--max', default=20, type=int, help='max time out,default num is 20') # timeout
     args = parser.parse_args()
     threads = args.threads
     output = args.output
     seed_file = args.seed_file
-
     with open(seed_file) as fr:
         seeds = fr.readlines()
     google_ips = get_available_google_ips(seeds, threads, args.max)
@@ -121,4 +145,5 @@ def _main():
         fw.write('|'.join(google_ips))
 
 if __name__ == '__main__':
+    memu()
     _main()
