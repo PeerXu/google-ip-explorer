@@ -27,14 +27,14 @@ def get_connect_time(ip, port):
     try:
         conn.request('HEAD', '/')
         resp = conn.getresponse()
-        if resp.status == 200 and resp.getheader('server') == 'gws':
+        if resp.status < 400 and resp.getheader('server') == 'gws':
             time.sleep(2)
             conn = httplib.HTTPConnection(ip, port)
             conn.request('HEAD', '/')
             s = time.time()
             resp = conn.getresponse()
             dt = time.time() - s
-            if resp.status == 200:
+            if resp.status < 400:
                 _COUNT += 1
                 print_progress(_COUNT)
                 return dt
